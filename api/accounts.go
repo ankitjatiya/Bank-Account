@@ -1,7 +1,8 @@
 package api
 
 import (
-	db "bank_project/db/sqlc"
+	db "Bank-Account/db/sqlc"
+	"database/sql"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -47,7 +48,11 @@ func (server *Server) getAccount(ctx *gin.Context) {
 
 	account, err := server.store.GetAccount(ctx, req.ID)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		if err == sql.ErrNoRows {
+			ctx.JSON(http.StatusNotFound, errorResponse(err))
+		} else {
+			ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		}
 		return
 	}
 

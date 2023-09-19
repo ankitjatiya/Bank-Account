@@ -1,9 +1,9 @@
 package main
 
 import (
-	"bank_project/api"
-	db "bank_project/db/sqlc"
-	"bank_project/db/util"
+	"Bank-Account/api"
+	db "Bank-Account/db/sqlc"
+	"Bank-Account/db/util"
 	"database/sql"
 	"log"
 
