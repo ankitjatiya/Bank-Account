@@ -1,7 +1,7 @@
 package db
 
 import (
-	"Bank-Account/db/util"
+	"Bank-Account/util"
 	"context"
 	"database/sql"
 	"testing"

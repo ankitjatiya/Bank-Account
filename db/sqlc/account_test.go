@@ -1,7 +1,7 @@
 package db
 
 import (
-	"Bank-Account/db/util"
+	"Bank-Account/util"
 	"context"
 	"database/sql"
 	"testing"
@@ -11,8 +11,9 @@ import (
 )
 
 func createRandomAccount(t *testing.T) Account {
+	user := createRandomUser(t)
 	arg := CreateAccountParams{
-		util.RandomOwner(),
+		user.Username,
 		util.RandomMoney(),
 		util.RandomCurrency(),
 	}
@@ -43,18 +44,22 @@ func TestGetAccount(t *testing.T) {
 }
 
 func TestListAccounts(t *testing.T) {
+	var lastAccount Account
 	for i := 0; i < 10; i++ {
-		createRandomAccount(t)
+		lastAccount = createRandomAccount(t)
 	}
 	arg := ListAccountsParams{
-		5,
-		5,
+		Owner:  lastAccount.Owner,
+		Limit:  5,
+		Offset: 0,
 	}
 	res, err := testQueries.ListAccounts(context.Background(), arg)
 	require.NoError(t, err)
-	require.Len(t, res, 5)
+	require.NotEmpty(t, res)
+
 	for _, account := range res {
 		require.NotEmpty(t, account)
+		require.Equal(t, lastAccount.Owner, account.Owner)
 	}
 }
 
