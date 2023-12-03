@@ -3,6 +3,7 @@ package db
 import (
 	"Bank-Account/util"
 	"context"
+	"database/sql"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -44,4 +45,21 @@ func TestGetUser(t *testing.T) {
 	require.Equal(t, user.HashedPassword, res.HashedPassword)
 	require.NotEmpty(t, res.Username)
 	require.NotEmpty(t, res.CreatedAt)
+}
+
+func TestUpdateUser(t *testing.T) {
+	user := createRandomUser(t)
+	newHashedPassword, err := util.HashPassword(util.RandomString(6))
+	newEmail := util.RandomEmail()
+	require.NoError(t, err)
+
+	arg := UpdateUserParams{
+		Username:       user.Username,
+		HashedPassword: sql.NullString{newHashedPassword, true},
+		Email:          sql.NullString{newEmail, true},
+	}
+	res, err := testQueries.UpdateUser(context.Background(), arg)
+	require.NoError(t, err)
+	require.Equal(t, res.HashedPassword, newHashedPassword)
+	require.Equal(t, res.Email, newEmail)
 }
